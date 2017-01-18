@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 module.exports = {
@@ -13,12 +14,12 @@ module.exports = {
       'zone.js'
     ],
     'common': ['es6-shim'],
-    'app': './src/app/app.ts'
+    'app': './src/app/main.ts'
   },
 
   output: {
     path: __dirname + '/build/',
-    publicPath: 'build/',
+    publicPath: '',
     filename: '[name].js',
     sourceMapFilename: '[name].js.map',
     chunkFilename: '[id].chunk.js'
@@ -32,7 +33,7 @@ module.exports = {
     loaders: [
       {
         test: /\.ts$/,
-        loader: 'ts',
+        loaders: ['ts', 'angular2-template-loader'],
         exclude: [ /node_modules/, /releases/ ]
       },
       {
@@ -40,7 +41,12 @@ module.exports = {
         loader: 'json'
       },
       {
-        test: /\.(css|html)$/,
+        test: /\.html$/,
+        loader: 'html',
+
+      },
+      {
+        test: /\.css$/,
         loader: 'raw'
       },
       {
@@ -51,7 +57,11 @@ module.exports = {
   },
 
   plugins: [
-    new CommonsChunkPlugin({ names: ['@angular', 'common'], minChunks: Infinity })
+    new CommonsChunkPlugin({ names: ['@angular', 'common'], minChunks: Infinity }),
+    // new HtmlWebpackPlugin({
+    //   template: './index.html',
+    //   chunksSortMode: 'dependency'
+    // })
   ],
   target:'electron-renderer'
 };
